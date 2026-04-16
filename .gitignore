@@ -1,0 +1,45 @@
+# ===========================
+# Dependencies
+# ===========================
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# ===========================
+# Build outputs
+# ===========================
+frontend/dist/
+frontend/build/
+*.log
+npm-debug.log*
+
+# ===========================
+# Environment variables - NEVER commit these
+# ===========================
+.env
+.env.local
+.env.production
+frontend/.env
+frontend/.env.local
+backend/.env
+backend/.env.local
+
+# ===========================
+# IDE & Editor
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===========================
+# OS files
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Uploads (base64 images stored in DB, not filesystem)
+# ===========================
+backend/uploads/
