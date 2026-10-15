@@ -1,99 +1,99 @@
-# 🍔 AbdiDelivery — Food Delivery Platform
+# Delivo
 
-> A modern, full-stack food delivery web application featuring real-time order tracking, secure authentication, restaurant management, and a powerful admin dashboard.
+A full-stack food delivery platform built with React and Node.js. Customers can browse menus, place orders, and track deliveries in real time. Administrators manage food listings, orders, and users through a dedicated dashboard.
 
 ![License](https://img.shields.io/badge/license-ISC-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
-![React](https://img.shields.io/badge/react-19.x-61DAFB?logo=react)
-![MySQL](https://img.shields.io/badge/database-MySQL-4479A1?logo=mysql)
-![Vite](https://img.shields.io/badge/build-Vite-646CFF?logo=vite)
+![React](https://img.shields.io/badge/react-19.x-61DAFB?logo=react&logoColor=white)
+![MySQL](https://img.shields.io/badge/database-MySQL-4479A1?logo=mysql&logoColor=white)
+![Vite](https://img.shields.io/badge/build-Vite-646CFF?logo=vite&logoColor=white)
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Environment Variables](#environment-variables)
   - [Running the App](#running-the-app)
-- [API Reference](#-api-reference)
-- [Pages & Components](#-pages--components)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [API Reference](#api-reference)
+- [Pages & Components](#pages--components)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 🌟 Overview
+## Overview
 
-**AbdiDelivery** is a full-stack food delivery platform built with React and Node.js. It provides a seamless experience for customers to browse menus, place orders, and track deliveries in real time — while giving administrators full control over food listings, order management, and user activity through a dedicated dashboard.
+Delivo is a full-stack food delivery web application. It provides customers with a smooth end-to-end ordering experience — from browsing the menu to tracking delivery status. On the backend, a RESTful API handles authentication, order processing, and food management, all secured with JWT and backed by a MySQL database.
 
 ---
 
-## ✨ Features
+## Features
 
-### 👤 Customer
-- 🔐 Secure login & registration with JWT authentication
-- 🍕 Browse food menu with category filtering
-- 🛒 Add to cart and checkout with order summary
-- 📦 Real-time order status tracking
-- 🕐 View full order history
-- 📞 Contact support page
+**Customer**
+- Secure login and registration with JWT authentication
+- Browse food menu with category filtering
+- Add to cart and proceed to checkout
+- Real-time order status tracking
+- Full order history
 
-### 🛠️ Admin
-- 📊 Admin dashboard with analytics overview
-- ➕ Add, edit, and delete food items (with image upload)
-- 📋 Manage and update order statuses
-- 👥 View and manage registered users
-- 🔒 Protected admin routes
+**Admin**
+- Dashboard with order and user overview
+- Create, update, and delete food items with image upload
+- Update and manage order statuses
+- View and manage registered users
+- Protected admin-only routes
 
-### ⚙️ System
-- JWT-based stateless authentication
-- Protected routes on both client & server
-- Input validation with `express-validator`
-- File upload support via `multer`
+**System**
+- Stateless JWT-based authentication
+- Server-side input validation via `express-validator`
+- File upload handling via `multer`
 - CORS-configured REST API
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
-### Frontend
+**Frontend**
+
 | Technology | Version | Purpose |
 |---|---|---|
-| [React](https://react.dev/) | 19.x | UI Library |
-| [Vite](https://vitejs.dev/) | 8.x | Build Tool & Dev Server |
-| [React Router DOM](https://reactrouter.com/) | 7.x | Client-side Routing |
-| [Tailwind CSS](https://tailwindcss.com/) | 4.x | Utility-first Styling |
-| [Lucide React](https://lucide.dev/) | 0.475+ | Icon Library |
+| React | 19.x | UI library |
+| Vite | 8.x | Build tool and dev server |
+| React Router DOM | 7.x | Client-side routing |
+| Tailwind CSS | 4.x | Utility-first styling |
+| Lucide React | 0.475+ | Icon set |
 
-### Backend
+**Backend**
+
 | Technology | Version | Purpose |
 |---|---|---|
-| [Node.js](https://nodejs.org/) | ≥18.0 | Runtime Environment |
-| [Express](https://expressjs.com/) | 4.x | Web Framework |
-| [MySQL2](https://github.com/sidorares/node-mysql2) | 3.x | Database Driver |
-| [JWT](https://jwt.io/) | 9.x | Authentication Tokens |
-| [bcryptjs](https://github.com/dcodeIO/bcrypt.js) | 2.x | Password Hashing |
-| [Multer](https://github.com/expressjs/multer) | 1.x | File Uploads |
-| [express-validator](https://express-validator.github.io/) | 6.x | Input Validation |
-| [dotenv](https://github.com/motdotla/dotenv) | 16.x | Environment Config |
-| [Nodemon](https://nodemon.io/) | 2.x | Dev Auto-restart |
+| Node.js | >= 18.0 | Runtime environment |
+| Express | 4.x | Web framework |
+| MySQL2 | 3.x | Database driver |
+| jsonwebtoken | 9.x | JWT authentication |
+| bcryptjs | 2.x | Password hashing |
+| Multer | 1.x | File upload handling |
+| express-validator | 6.x | Input validation |
+| dotenv | 16.x | Environment config |
+| Nodemon | 2.x | Dev auto-restart |
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
-Food-delivery-app/
-├── client/                      # React frontend (Vite)
-│   ├── public/                  # Static assets
+delivo/
+├── client/                        # React frontend (Vite)
+│   ├── public/
 │   └── src/
-│       ├── components/          # Reusable UI components
+│       ├── components/            # Reusable UI components
 │       │   ├── Navbar.jsx
 │       │   ├── Footer.jsx
 │       │   ├── Toast.jsx
@@ -104,8 +104,8 @@ Food-delivery-app/
 │       │   ├── CategoryItem.jsx
 │       │   └── FoodImage.jsx
 │       ├── context/
-│       │   └── AuthContext.jsx  # Global auth state
-│       ├── pages/               # Application pages
+│       │   └── AuthContext.jsx    # Global authentication state
+│       ├── pages/
 │       │   ├── Home.jsx
 │       │   ├── Login.jsx
 │       │   ├── Checkout.jsx
@@ -115,24 +115,24 @@ Food-delivery-app/
 │       │   ├── Admin.jsx
 │       │   └── Contact.jsx
 │       ├── services/
-│       │   └── api.js           # Centralized API service layer
-│       ├── App.jsx              # Root component & routing
-│       └── main.jsx             # Entry point
+│       │   └── api.js             # Centralized API service layer
+│       ├── App.jsx                # Root component and routing
+│       └── main.jsx
 │
-├── server/                      # Node.js/Express backend
+├── server/                        # Node.js / Express backend
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── database.js      # MySQL connection pool
-│   │   ├── controllers/         # Route handler logic
-│   │   ├── middleware/          # Auth & validation middleware
-│   │   ├── routes/              # API route definitions
+│   │   │   └── database.js        # MySQL connection pool
+│   │   ├── controllers/           # Route handler logic
+│   │   ├── middleware/            # Auth and validation middleware
+│   │   ├── routes/
 │   │   │   ├── auth.js
 │   │   │   ├── foods.js
 │   │   │   ├── orders.js
 │   │   │   └── admin.js
-│   │   └── utils/               # Helper utilities
-│   ├── server.js                # Express app entry point
-│   ├── .env.example             # Environment variable template
+│   │   └── utils/
+│   ├── server.js                  # Express entry point
+│   ├── .env.example
 │   └── package.json
 │
 ├── .gitignore
@@ -141,11 +141,9 @@ Food-delivery-app/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-
-Make sure you have the following installed:
 
 - [Node.js](https://nodejs.org/) `>= 18.0.0`
 - [npm](https://www.npmjs.com/) `>= 9.0.0`
@@ -154,63 +152,54 @@ Make sure you have the following installed:
 
 ### Installation
 
-**1. Clone the repository**
+Clone the repository:
 
 ```bash
 git clone https://github.com/Abeenaa/Food-delivery-app.git
 cd Food-delivery-app
 ```
 
-**2. Install server dependencies**
+Install dependencies for both client and server:
 
 ```bash
-cd server
-npm install
-```
+# Server
+cd server && npm install
 
-**3. Install client dependencies**
-
-```bash
-cd ../client
-npm install
+# Client
+cd ../client && npm install
 ```
 
 ### Environment Variables
 
-**Server** — copy the example file and fill in your values:
+Copy the example env file and configure it:
 
 ```bash
 cd server
 cp .env.example .env
 ```
 
-Then edit `server/.env`:
+`server/.env`:
 
 ```env
-# Server
 PORT=5000
 NODE_ENV=development
 
-# Database
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_mysql_password
-DB_NAME=food_delivery_db
+DB_NAME=delivo_db
 
-# JWT
-JWT_SECRET=your_super_secret_key_here
+JWT_SECRET=your_secure_random_secret
 JWT_EXPIRES_IN=7d
 
-# File Upload
 MAX_FILE_SIZE=5242880
 UPLOAD_PATH=./uploads
 
-# Admin Credentials
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=your_secure_admin_password
+ADMIN_EMAIL=admin@delivo.com
+ADMIN_PASSWORD=your_admin_password
 ```
 
-**Client** — create `client/.env`:
+`client/.env`:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
@@ -218,118 +207,109 @@ VITE_API_URL=http://localhost:5000/api
 
 ### Running the App
 
-**Start the backend server:**
+Start the backend:
 
 ```bash
 cd server
-npm run dev       # Development (with nodemon auto-restart)
-# or
-npm start         # Production
+npm run dev      # development (nodemon)
+npm start        # production
 ```
 
-The API will be available at: `http://localhost:5000`
-
-**Start the frontend dev server:**
+Start the frontend:
 
 ```bash
 cd client
 npm run dev
 ```
 
-The app will be available at: `http://localhost:5173`
-
-> 💡 **Tip:** Open two terminal windows — one for the server, one for the client.
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:5173 |
+| Backend API | http://localhost:5000 |
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 All endpoints are prefixed with `/api`.
 
-### 🔐 Auth — `/api/auth`
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/auth/login` | Customer login | ❌ |
-| `POST` | `/auth/register` | Customer registration | ❌ |
-| `POST` | `/auth/admin/login` | Admin login | ❌ |
-| `GET` | `/auth/me` | Get current user profile | ✅ |
+### Authentication — `/api/auth`
 
-### 🍕 Foods — `/api/foods`
-| Method | Endpoint | Description | Auth Required |
+| Method | Endpoint | Description | Auth |
 |---|---|---|---|
-| `GET` | `/foods` | Get all food items | ❌ |
-| `GET` | `/foods/:id` | Get single food item | ❌ |
-| `POST` | `/foods` | Create food item | ✅ Admin |
-| `PUT` | `/foods/:id` | Update food item | ✅ Admin |
-| `DELETE` | `/foods/:id` | Delete food item | ✅ Admin |
+| POST | `/auth/login` | Customer login | — |
+| POST | `/auth/register` | Customer registration | — |
+| POST | `/auth/admin/login` | Admin login | — |
+| GET | `/auth/me` | Get current user profile | JWT |
 
-### 📦 Orders — `/api/orders`
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| `POST` | `/orders` | Place a new order | ✅ |
-| `GET` | `/orders/my-orders` | Get user's order history | ✅ |
-| `GET` | `/orders/:id` | Get order details & status | ✅ |
+### Foods — `/api/foods`
 
-### 🛠️ Admin — `/api/admin`
-| Method | Endpoint | Description | Auth Required |
+| Method | Endpoint | Description | Auth |
 |---|---|---|---|
-| `GET` | `/admin/orders` | Get all orders | ✅ Admin |
-| `PUT` | `/admin/orders/:id` | Update order status | ✅ Admin |
-| `GET` | `/admin/users` | Get all users | ✅ Admin |
+| GET | `/foods` | List all food items | — |
+| GET | `/foods/:id` | Get single food item | — |
+| POST | `/foods` | Create food item | Admin |
+| PUT | `/foods/:id` | Update food item | Admin |
+| DELETE | `/foods/:id` | Delete food item | Admin |
+
+### Orders — `/api/orders`
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| POST | `/orders` | Place a new order | JWT |
+| GET | `/orders/my-orders` | Get user order history | JWT |
+| GET | `/orders/:id` | Get order details and status | JWT |
+
+### Admin — `/api/admin`
+
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| GET | `/admin/orders` | List all orders | Admin |
+| PUT | `/admin/orders/:id` | Update order status | Admin |
+| GET | `/admin/users` | List all users | Admin |
 
 ---
 
-## 🖥 Pages & Components
+## Pages & Components
 
 ### Pages
+
 | Page | Route | Description |
 |---|---|---|
-| `Home` | `/` | Landing page with food categories & menu |
-| `Login` | `/login` | Customer & admin authentication |
-| `Checkout` | `/checkout` | Cart review & order placement |
-| `Order` | `/order/:id` | Order confirmation & details |
-| `OrderHistory` | `/orders` | Past orders list |
-| `TrackOrder` | `/track/:id` | Real-time order status tracking |
-| `Admin` | `/admin` | Admin dashboard (protected) |
-| `Contact` | `/contact` | Contact & support page |
+| Home | `/` | Menu browsing with category filter |
+| Login | `/login` | Customer and admin authentication |
+| Checkout | `/checkout` | Cart review and order placement |
+| Order | `/order/:id` | Order confirmation and details |
+| OrderHistory | `/orders` | User's past orders |
+| TrackOrder | `/track/:id` | Live order status tracking |
+| Admin | `/admin` | Admin dashboard (protected) |
+| Contact | `/contact` | Support and contact page |
 
 ### Key Components
+
 | Component | Description |
 |---|---|
-| `Navbar` | Responsive navigation with cart count & auth state |
-| `Footer` | Site footer with links |
-| `ProtectedRoute` | HOC that guards routes requiring authentication |
-| `AuthContext` | React context providing global auth state & actions |
-| `Toast` | Notification system for success/error messages |
-| `ConfirmDialog` | Reusable confirmation modal |
+| `Navbar` | Responsive nav with cart count and auth state |
+| `ProtectedRoute` | Wraps routes requiring authentication |
+| `AuthContext` | Global auth state via React Context API |
+| `Toast` | App-wide notification system |
+| `ConfirmDialog` | Generic confirmation modal |
 | `LoadingSpinner` | Global loading indicator |
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! Please follow these steps:
+1. Fork the repository
+2. Create your branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "feat: description"`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a Pull Request
 
-1. **Fork** the repository
-2. Create a new branch: `git checkout -b feature/your-feature-name`
-3. Make your changes and **commit**: `git commit -m "feat: add your feature"`
-4. **Push** to your branch: `git push origin feature/your-feature-name`
-5. Open a **Pull Request**
-
-Please follow the [Conventional Commits](https://www.conventionalcommits.org/) standard for commit messages.
+Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the **ISC License** — see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-Made with ❤️ by [Abeenaa](https://github.com/Abeenaa)
-
-⭐ **Star this repo** if you found it helpful!
-
-</div>
+ISC — see [LICENSE](LICENSE) for details.

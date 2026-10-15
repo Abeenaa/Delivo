@@ -1,7 +1,7 @@
 {
-  "name": "abdi-delivery-backend",
+  "name": "delivo-backend",
   "version": "1.0.0",
-  "description": "Backend API for AbdiDelivery food delivery app",
+  "description": "Backend API for Delivo — a full-stack food delivery platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
