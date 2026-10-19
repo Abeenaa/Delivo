@@ -453,7 +453,7 @@ const Admin = () => {
       {/* Sidebar */}
       <aside className="hidden lg:flex lg:flex-col lg:w-64 bg-white border-r border-gray-200">
         <div className="flex items-center justify-center h-16 border-b border-gray-200 bg-green-600">
-          <h1 className="text-xl font-bold text-white">AbdiDelivery Admin</h1>
+          <h1 className="text-xl font-bold text-white">Delivo Admin</h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
@@ -504,7 +504,7 @@ const Admin = () => {
         {/* Top Bar */}
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-gray-900 lg:hidden">AbdiDelivery Admin</h2>
+            <h2 className="text-xl font-bold text-gray-900 lg:hidden">Delivo Admin</h2>
             <h2 className="hidden lg:block text-2xl font-bold text-gray-900">
               {activeTab === "dashboard" ? "Dashboard" : activeTab === "orders" ? "Orders" : "Food Items"}
             </h2>

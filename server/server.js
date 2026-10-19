@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Basic route
 app.get('/', (req, res) => {
   res.json({ 
-    message: 'AbdiDelivery Backend API is running!',
+    message: 'Delivo Backend API is running!',
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',

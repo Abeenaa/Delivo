@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
 const AuthContext = createContext(null);
-const STORAGE_KEY = "abdidelivery-session";
+const STORAGE_KEY = "delivo-session";
 
 const loadStoredSession = () => {
   if (typeof window === "undefined") {

@@ -16,7 +16,7 @@ const Contact = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const subject = encodeURIComponent(`Message from ${formData.name} via AbdiDelivery`);
+    const subject = encodeURIComponent(`Message from ${formData.name} via Delivo`);
     const body = encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
     );
@@ -34,7 +34,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email",
-      value: "support@abdidelivery.com",
+      value: "support@delivo.com",
       color: "bg-blue-100 text-blue-600",
     },
     {

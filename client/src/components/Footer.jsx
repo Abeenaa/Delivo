@@ -106,7 +106,7 @@ const Footer = () => {
       </div>
 
       <div className="max-w-7xl mx-auto pt-8 border-t border-green-100 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400 font-medium text-center md:text-left">
-        <p>© 2024 AbdiDelivery Ethiopian Gastronomy. All rights reserved.</p>
+        <p>© 2024 Delivo Ethiopian Gastronomy. All rights reserved.</p>
         <div className="flex flex-wrap justify-center gap-4 md:gap-6">
           <a href="#" className="hover:text-gray-600">
             Terms of Service

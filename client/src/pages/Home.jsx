@@ -98,7 +98,7 @@ const Home = () => {
               <div className="absolute -right-28 -top-24 hidden h-105 w-105 rounded-full bg-red-600 opacity-20 blur-[100px] sm:block md:h-150 md:w-150"></div>
               <div className="relative z-20 w-fit mx-auto animate-float">
                 <img
-                  src="/assets/hero.png"
+                  src="/assets/hero-burger.png"
                   alt="Ethiopian Platter"
                   className="w-48 sm:w-64 object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] sm:w-95 md:w-120"
                 />
@@ -236,7 +236,7 @@ const Home = () => {
         <section className="mb-14 sm:mb-20">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-              About AbdiDelivery
+              About Delivo
             </h2>
             <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
               Bringing Ethiopian kitchens to your door with speed and authenticity
@@ -281,7 +281,7 @@ const Home = () => {
             <div className="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-green-200 transition-all duration-300">
               <h3 className="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition-colors mb-4">Our Story</h3>
               <p className="text-gray-600 leading-relaxed mb-4">
-                AbdiDelivery is a project-based food delivery system developed to showcase 
+                Delivo is a project-based food delivery system developed to showcase 
                 modern web development practices and create a seamless ordering experience 
                 for Ethiopian cuisine enthusiasts.
               </p>
