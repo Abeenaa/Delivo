@@ -12,7 +12,6 @@ import { foodAPI } from "../services/api";
 const FAVORITES_KEY = "delivo-favorites";
 const categories = ["All", "Main Dishes", "Appetizers", "Drinks"];
 
-// ─── Skeleton card ───
 const SkeletonCard = () => (
   <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 animate-skeleton">
     <div className="h-48 bg-gray-200 w-full" />
@@ -45,13 +44,11 @@ const Order = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Sync search query with URL param
   useEffect(() => {
     const param = searchParams.get("search");
     if (param) setSearchQuery(param);
   }, [searchParams]);
 
-  // Load food items
   useEffect(() => {
     const loadFoodItems = async () => {
       setLoading(true);

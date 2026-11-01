@@ -5,7 +5,6 @@ const createTables = async () => {
   try {
     logger.info('Starting database migrations...');
 
-    // Create users table
     const createUsersTable = `
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,7 +18,6 @@ const createTables = async () => {
       )
     `;
 
-    // Create food_items table
     const createFoodItemsTable = `
       CREATE TABLE IF NOT EXISTS food_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,7 +36,6 @@ const createTables = async () => {
       )
     `;
 
-    // Create orders table
     const createOrdersTable = `
       CREATE TABLE IF NOT EXISTS orders (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -49,7 +46,7 @@ const createTables = async () => {
         delivery_address TEXT NOT NULL,
         delivery_phone VARCHAR(20) NOT NULL,
         delivery_name VARCHAR(100) NOT NULL,
-        payment_method ENUM('cash', 'card', 'mobile') DEFAULT 'cash',
+        payment_method ENUM('cash', 'card', 'mobile', 'chapa') DEFAULT 'cash',
         notes TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -57,7 +54,6 @@ const createTables = async () => {
       )
     `;
 
-    // Create order_items table
     const createOrderItemsTable = `
       CREATE TABLE IF NOT EXISTS order_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -71,7 +67,6 @@ const createTables = async () => {
       )
     `;
 
-    // Execute table creation
     await pool.execute(createUsersTable);
     logger.success('Users table created/verified');
 
@@ -84,7 +79,6 @@ const createTables = async () => {
     await pool.execute(createOrderItemsTable);
     logger.success('Order items table created/verified');
 
-    // Update orders table to allow NULL user_id for guest orders
     try {
       await pool.execute('ALTER TABLE orders MODIFY COLUMN user_id INT NULL');
       logger.success('Orders table updated to allow guest orders');
@@ -92,7 +86,6 @@ const createTables = async () => {
       logger.info('Orders table user_id column update skipped');
     }
 
-    // Add tx_ref column for Chapa payment reference
     try {
       await pool.execute('ALTER TABLE orders ADD COLUMN tx_ref VARCHAR(100) NULL UNIQUE');
       logger.success('orders.tx_ref column added');
@@ -100,7 +93,6 @@ const createTables = async () => {
       logger.info('orders.tx_ref column already exists — skipping');
     }
 
-    // Add payment_status column
     try {
       await pool.execute(
         "ALTER TABLE orders ADD COLUMN payment_status ENUM('pending','paid','failed') DEFAULT 'pending'"
@@ -110,7 +102,6 @@ const createTables = async () => {
       logger.info('orders.payment_status column already exists — skipping');
     }
 
-    // Update payment_method column enum to include 'chapa'
     try {
       await pool.execute(
         "ALTER TABLE orders MODIFY COLUMN payment_method ENUM('cash', 'card', 'mobile', 'chapa') DEFAULT 'cash'"
@@ -120,7 +111,6 @@ const createTables = async () => {
       logger.info('orders.payment_method column update skipped');
     }
 
-    // Upgrade image_url column to LONGTEXT to support large base64 images
     try {
       await pool.execute('ALTER TABLE food_items MODIFY COLUMN image_url LONGTEXT');
       logger.success('food_items image_url upgraded to LONGTEXT');
@@ -128,7 +118,6 @@ const createTables = async () => {
       logger.info('image_url column upgrade skipped');
     }
 
-    // Create default admin user (after tables are created)
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
     
@@ -146,7 +135,6 @@ const createTables = async () => {
       logger.info('Admin user creation skipped');
     }
 
-    // Insert default food items
     const defaultFoodItems = [
       {
         id: 1001,

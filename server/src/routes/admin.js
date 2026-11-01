@@ -6,7 +6,6 @@ const { verifyToken, verifyAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// GET /api/admin/orders - Get all orders (Admin only)
 router.get('/orders', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const [orders] = await pool.execute(
@@ -30,7 +29,6 @@ router.get('/orders', verifyToken, verifyAdmin, async (req, res) => {
       ORDER BY o.created_at DESC`
     );
 
-    // Parse the items JSON
     const formattedOrders = orders.map(order => ({
       ...order,
       items: order.items ? JSON.parse(`[${order.items}]`) : []
@@ -51,7 +49,6 @@ router.get('/orders', verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
-// PUT /api/admin/orders/:id - Update order status (Admin only)
 router.put('/orders/:id', verifyToken, verifyAdmin, [
   body('status').isIn(['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled']).withMessage('Invalid status')
 ], async (req, res) => {
@@ -96,26 +93,20 @@ router.put('/orders/:id', verifyToken, verifyAdmin, [
   }
 });
 
-// GET /api/admin/stats - Get dashboard statistics (Admin only)
 router.get('/stats', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    // Get total orders
     const [totalOrdersResult] = await pool.execute('SELECT COUNT(*) as total FROM orders');
     const totalOrders = totalOrdersResult[0].total;
 
-    // Get total revenue
     const [totalRevenueResult] = await pool.execute('SELECT SUM(total_amount) as revenue FROM orders WHERE status != "cancelled"');
     const totalRevenue = totalRevenueResult[0].revenue || 0;
 
-    // Get total customers
     const [totalCustomersResult] = await pool.execute('SELECT COUNT(*) as total FROM users WHERE role = "customer"');
     const totalCustomers = totalCustomersResult[0].total;
 
-    // Get total food items
     const [totalFoodItemsResult] = await pool.execute('SELECT COUNT(*) as total FROM food_items WHERE is_active = TRUE');
     const totalFoodItems = totalFoodItemsResult[0].total;
 
-    // Get orders by status
     const [ordersByStatus] = await pool.execute(
       'SELECT status, COUNT(*) as count FROM orders GROUP BY status'
     );

@@ -50,10 +50,6 @@ const FoodItemModal = ({ item, onClose }) => {
       .filter((c) => c.id === item?.id)
       .reduce((sum, c) => sum + c.quantity, 0);
   }, [cartItems, item?.id]);
-
-
-
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();

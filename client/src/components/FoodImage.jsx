@@ -4,7 +4,6 @@ const FoodImage = ({ src, alt, className = '', fallback = "/assets/food.png" }) 
   const [imageSrc, setImageSrc] = useState(src || fallback);
   const [hasError, setHasError] = useState(false);
 
-  // Update image when src prop changes
   useEffect(() => {
     setImageSrc(src || fallback);
     setHasError(false);

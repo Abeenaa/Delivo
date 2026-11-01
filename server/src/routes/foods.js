@@ -1,11 +1,11 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { pool } = require('../config/database');
+const { verifyToken, verifyAdmin } = require('../middleware/auth');
 const logger = require('../utils/logger');
 
 const router = express.Router();
 
-// Validation middleware
 const foodValidation = [
   body('name').trim().isLength({ min: 2 }).withMessage('Name must be at least 2 characters'),
   body('description').trim().isLength({ min: 10 }).withMessage('Description must be at least 10 characters'),
@@ -14,7 +14,6 @@ const foodValidation = [
   body('rating').optional().isFloat({ min: 0, max: 5 }).withMessage('Rating must be between 0 and 5')
 ];
 
-// GET /api/foods - Get all food items
 router.get('/', async (req, res) => {
   try {
     const [foods] = await pool.execute(
@@ -36,7 +35,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/foods/:id - Get single food item
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -68,10 +66,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Import middleware
-const { verifyToken, verifyAdmin } = require('../middleware/auth');
-
-// POST /api/foods - Create food item (Admin only)
 router.post('/', verifyToken, verifyAdmin, foodValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -116,7 +110,6 @@ router.post('/', verifyToken, verifyAdmin, foodValidation, async (req, res) => {
   }
 });
 
-// PUT /api/foods/:id - Update food item (Admin only)
 router.put('/:id', verifyToken, verifyAdmin, foodValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -159,7 +152,6 @@ router.put('/:id', verifyToken, verifyAdmin, foodValidation, async (req, res) =>
   }
 });
 
-// DELETE /api/foods/:id - Delete food item (Admin only)
 router.delete('/:id', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const { id } = req.params;

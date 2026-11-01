@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-// Create connection pool for better performance
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -15,10 +14,8 @@ const pool = mysql.createPool({
   connectTimeout: 60000
 });
 
-// Get promise-based connection
 const promisePool = pool.promise();
 
-// Test database connection
 const testConnection = async () => {
   try {
     const connection = await promisePool.getConnection();

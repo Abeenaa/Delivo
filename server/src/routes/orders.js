@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
@@ -6,7 +7,6 @@ const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Validation middleware
 const orderValidation = [
   body('items').isArray({ min: 1 }).withMessage('Order must contain at least one item'),
   body('items.*.food_item_id').isInt({ min: 1 }).withMessage('Invalid food item ID'),
@@ -17,18 +17,14 @@ const orderValidation = [
   body('payment_method').isIn(['cash', 'card', 'mobile', 'chapa']).withMessage('Invalid payment method')
 ];
 
-// POST /api/orders - Create new order (Guest or Customer)
 router.post('/', orderValidation, async (req, res) => {
   const connection = await pool.getConnection();
   
   try {
-    console.log('Received order data:', JSON.stringify(req.body, null, 2));
-    
     await connection.beginTransaction();
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array());
       await connection.rollback();
       return res.status(400).json({
         success: false,
@@ -73,7 +69,6 @@ router.post('/', orderValidation, async (req, res) => {
       }
     }
 
-    // Calculate total amount from trusted database prices
     let totalAmount = 0;
     for (const item of items) {
       const food = foodById.get(item.food_item_id);
@@ -83,22 +78,18 @@ router.post('/', orderValidation, async (req, res) => {
     const deliveryFee = 45.00;
     const finalTotal = totalAmount + deliveryFee;
 
-    // Get user ID if authenticated, otherwise null for guest orders
     let userId = null;
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       try {
-        const jwt = require('jsonwebtoken');
         const token = authHeader.substring(7);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         userId = decoded.userId;
       } catch (error) {
-        // Invalid token, continue as guest
-        console.log('Invalid token, processing as guest order');
+        userId = null;
       }
     }
 
-    // Create order
     const [orderResult] = await connection.execute(
       'INSERT INTO orders (user_id, total_amount, delivery_fee, delivery_name, delivery_phone, delivery_address, payment_method, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [userId, finalTotal, deliveryFee, delivery_name, delivery_phone, delivery_address, payment_method, notes || null]
@@ -106,7 +97,6 @@ router.post('/', orderValidation, async (req, res) => {
 
     const orderId = orderResult.insertId;
 
-    // Add order items
     for (const item of items) {
       const food = foodById.get(item.food_item_id);
       await connection.execute(
@@ -145,7 +135,6 @@ router.post('/', orderValidation, async (req, res) => {
   }
 });
 
-// GET /api/orders/track/:id - Track an order by ID for logged-in customers
 router.get('/track/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -197,7 +186,6 @@ router.get('/track/:id', verifyToken, async (req, res) => {
   }
 });
 
-// GET /api/orders - Get user's orders (Customer only)
 router.get('/', verifyToken, async (req, res) => {
   try {
     const [orders] = await pool.execute(
@@ -220,7 +208,6 @@ router.get('/', verifyToken, async (req, res) => {
       [req.user.id]
     );
 
-    // Parse the items JSON
     const formattedOrders = orders.map(order => ({
       ...order,
       items: order.items ? JSON.parse(`[${order.items}]`) : []
@@ -241,7 +228,6 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-// GET /api/orders/:id - Get specific order (Customer only)
 router.get('/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;

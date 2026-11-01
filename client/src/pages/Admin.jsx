@@ -174,10 +174,9 @@ const Admin = () => {
     stock_status: "Available",
     rating: "4.5",
     description: "",
-    image_url: "", // No default image
+    image_url: "",
   });
 
-  // Check authentication and load data on mount
   useEffect(() => {
     const isAdminAuth = localStorage.getItem("adminAuth");
     if (!isAdminAuth) {
@@ -185,12 +184,10 @@ const Admin = () => {
       return;
     }
 
-    // Load data
     loadFoodItems();
     loadOrders();
     loadStats();
 
-    // Auto-refresh orders every 30 seconds
     const interval = setInterval(() => {
       loadOrders();
       loadStats();
@@ -207,7 +204,6 @@ const Admin = () => {
       }
     } catch (error) {
       console.error('Failed to load food items:', error);
-      // Fallback to localStorage
       const savedItems = localStorage.getItem("adminFoodItems");
       if (savedItems) {
         setFoodItems(JSON.parse(savedItems));
@@ -250,19 +246,16 @@ const Admin = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         showError("Image size should be less than 2MB");
         return;
       }
 
-      // Check file type
       if (!file.type.startsWith('image/')) {
         showError("Please upload an image file");
         return;
       }
 
-      // Convert to base64
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData(prev => ({ ...prev, image_url: reader.result }));
@@ -281,7 +274,7 @@ const Admin = () => {
 
       const response = await foodAPI.create(formData);
       if (response.success) {
-        await loadFoodItems(); // Reload items
+        await loadFoodItems();
         setShowAddModal(false);
         resetForm();
         showSuccess('Food item added successfully!');
@@ -300,7 +293,7 @@ const Admin = () => {
     try {
       const response = await foodAPI.update(currentItem.id, formData);
       if (response.success) {
-        await loadFoodItems(); // Reload items
+        await loadFoodItems();
         setShowEditModal(false);
         setCurrentItem(null);
         resetForm();
@@ -318,7 +311,7 @@ const Admin = () => {
     try {
       const response = await foodAPI.delete(id);
       if (response.success) {
-        await loadFoodItems(); // Reload items
+        await loadFoodItems();
         showSuccess('Food item deleted successfully!');
       }
     } catch (error) {
@@ -397,7 +390,7 @@ const Admin = () => {
     resetForm();
     setShowAddModal(true);
   };
-  // Use real stats or fallback to mock data
+
   const displayStats = [
     {
       label: "Total Orders",

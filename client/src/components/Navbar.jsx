@@ -31,20 +31,17 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsCartOpen(false);
   }, [location.pathname]);
 
-  // Scroll shadow
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Dark mode
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");

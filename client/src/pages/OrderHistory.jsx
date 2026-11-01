@@ -12,7 +12,6 @@ import { orderAPI } from "../services/api";
 
 const RATINGS_KEY = "delivo-order-ratings";
 
-// ─── Inline star rating widget ───
 const StarRating = ({ orderId, onRate }) => {
   const [hovered, setHovered] = useState(0);
   const [rated, setRated] = useState(() => {
@@ -118,7 +117,6 @@ const OrderHistory = () => {
           quantity: item.quantity,
         });
       });
-      // Scroll / notify — toast handled by CartDrawer visibility
     },
     [addItem, clearCart]
   );

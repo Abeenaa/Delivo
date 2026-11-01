@@ -19,10 +19,8 @@ const loadCart = () => {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     const cartData = stored ? JSON.parse(stored) : [];
     
-    // Check if cart contains old string IDs and clear if so
     const hasStringIds = cartData.some(item => typeof item.id === 'string' && item.id.startsWith('food-'));
     if (hasStringIds) {
-      console.log('Clearing cart with old string IDs');
       window.localStorage.removeItem(STORAGE_KEY);
       return [];
     }
@@ -43,9 +41,7 @@ const reducer = (state, action) => {
 
       try {
         playCartChime();
-      } catch {
-        // Safe sound fallback
-      }
+      } catch {}
 
       if (existing) {
         return state.map((item) =>

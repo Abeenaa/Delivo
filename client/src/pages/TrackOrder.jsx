@@ -49,7 +49,6 @@ const estimateDeliveryWindow = (createdAt, status) => {
   return `${from.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} – ${to.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
 };
 
-// Animated live status badge that pulses when not delivered
 const LiveBadge = ({ status }) => {
   if (status === "delivered" || status === "cancelled") return null;
   return (
@@ -63,7 +62,7 @@ const LiveBadge = ({ status }) => {
   );
 };
 
-const POLL_INTERVAL = 15_000; // 15 seconds
+const POLL_INTERVAL = 15_000;
 
 const TrackOrder = () => {
   const { id } = useParams();
@@ -91,7 +90,6 @@ const TrackOrder = () => {
 
   useEffect(() => {
     loadOrder(true);
-    // Start polling unless already delivered/cancelled
     pollRef.current = setInterval(() => {
       setOrder((prev) => {
         if (prev?.status === "delivered" || prev?.status === "cancelled") {
@@ -104,7 +102,6 @@ const TrackOrder = () => {
     }, POLL_INTERVAL);
 
     return () => clearInterval(pollRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const currentStatusIndex = useMemo(() => {
@@ -112,7 +109,6 @@ const TrackOrder = () => {
     return statusIndex(order.status);
   }, [order]);
 
-  // Progress percentage for the timeline bar
   const progressPct = useMemo(() => {
     if (currentStatusIndex < 0) return 0;
     return Math.round((currentStatusIndex / (statusSteps.length - 1)) * 100);

@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const { pool } = require('../config/database');
 const logger = require('../utils/logger');
 
-// Middleware to verify JWT token
 const verifyToken = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -16,7 +15,6 @@ const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Get user from database
     const [users] = await pool.execute(
       'SELECT id, name, email, role FROM users WHERE id = ?',
       [decoded.userId]
@@ -41,9 +39,8 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-// Middleware to check if user is admin
 const verifyAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
+  if (req.user?.role !== 'admin') {
     return res.status(403).json({
       success: false,
       message: 'Access denied. Admin privileges required.'

@@ -52,8 +52,6 @@ const PaymentVerify = () => {
 
       <main className="mx-auto w-full max-w-xl px-4 py-20 sm:px-6">
         <div className="rounded-3xl bg-white p-10 shadow-xl border border-gray-100 text-center">
-
-          {/* ── Verifying ── */}
           {status === STATUS.VERIFYING && (
             <>
               <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-green-50 mb-6">
@@ -66,7 +64,6 @@ const PaymentVerify = () => {
             </>
           )}
 
-          {/* ── Success ── */}
           {status === STATUS.SUCCESS && (
             <>
               <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-green-100 mb-6">
@@ -101,7 +98,6 @@ const PaymentVerify = () => {
             </>
           )}
 
-          {/* ── Failed ── */}
           {status === STATUS.FAILED && (
             <>
               <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-red-50 mb-6">
@@ -128,7 +124,6 @@ const PaymentVerify = () => {
           )}
         </div>
 
-        {/* Security note */}
         <p className="mt-6 text-center text-xs text-gray-400">
           🔒 Payments are processed securely by{" "}
           <a

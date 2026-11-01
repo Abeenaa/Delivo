@@ -1,4 +1,3 @@
-// Simple logger utility
 const logger = {
   info: (message, data = null) => {
     console.log(`ℹ️  [INFO] ${new Date().toISOString()} - ${message}`);

@@ -7,13 +7,11 @@ const logger = require('../utils/logger');
 
 const router = express.Router();
 
-// Validation middleware
 const registerValidation = [
   body('name').trim().isLength({ min: 2 }).withMessage('Name must be at least 2 characters'),
   body('email').isEmail().withMessage('Please provide a valid email'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   body('phone').optional().isLength({ min: 10 }).withMessage('Phone number must be at least 10 characters')
-
 ];
 
 const loginValidation = [
@@ -21,10 +19,8 @@ const loginValidation = [
   body('password').notEmpty().withMessage('Password is required')
 ];
 
-// Register endpoint
 router.post('/register', registerValidation, async (req, res) => {
   try {
-    // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -36,7 +32,6 @@ router.post('/register', registerValidation, async (req, res) => {
 
     const { name, email, phone, password } = req.body;
 
-    // Check if user already exists
     const [existingUsers] = await pool.execute(
       'SELECT id FROM users WHERE email = ?',
       [email]
@@ -49,17 +44,14 @@ router.post('/register', registerValidation, async (req, res) => {
       });
     }
 
-    // Hash password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Insert new user
     const [result] = await pool.execute(
       'INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)',
       [name, email, phone || null, hashedPassword]
     );
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: result.insertId, email, role: 'customer' },
       process.env.JWT_SECRET,
@@ -91,10 +83,9 @@ router.post('/register', registerValidation, async (req, res) => {
     });
   }
 });
-// Login endpoint
+
 router.post('/login', loginValidation, async (req, res) => {
   try {
-    // Check validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -106,7 +97,6 @@ router.post('/login', loginValidation, async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Find user by email
     const [users] = await pool.execute(
       'SELECT id, name, email, phone, password, role FROM users WHERE email = ?',
       [email]
@@ -121,7 +111,6 @@ router.post('/login', loginValidation, async (req, res) => {
 
     const user = users[0];
 
-    // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -130,7 +119,6 @@ router.post('/login', loginValidation, async (req, res) => {
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
@@ -163,7 +151,6 @@ router.post('/login', loginValidation, async (req, res) => {
   }
 });
 
-// Admin login endpoint
 router.post('/admin-login', loginValidation, async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -177,7 +164,6 @@ router.post('/admin-login', loginValidation, async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Find admin user
     const [users] = await pool.execute(
       'SELECT id, name, email, phone, password, role FROM users WHERE email = ? AND role = ?',
       [email, 'admin']
@@ -192,7 +178,6 @@ router.post('/admin-login', loginValidation, async (req, res) => {
 
     const admin = users[0];
 
-    // Check password
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -201,7 +186,6 @@ router.post('/admin-login', loginValidation, async (req, res) => {
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: admin.id, email: admin.email, role: admin.role },
       process.env.JWT_SECRET,
