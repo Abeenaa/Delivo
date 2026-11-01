@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
+import { playCartChime } from "../utils/sound";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "quickbite-cart";
@@ -32,37 +33,46 @@ const loadCart = () => {
   }
 };
 
+const getItemKey = (item) => item.cartItemId || item.id;
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "ADD_ITEM": {
-      const existing = state.find((item) => item.id === action.payload.id);
+      const payloadKey = getItemKey(action.payload);
+      const existing = state.find((item) => getItemKey(item) === payloadKey);
+
+      try {
+        playCartChime();
+      } catch {
+        // Safe sound fallback
+      }
 
       if (existing) {
         return state.map((item) =>
-          item.id === action.payload.id
+          getItemKey(item) === payloadKey
             ? { ...item, quantity: item.quantity + action.payload.quantity }
             : item,
         );
       }
 
-      return [...state, action.payload];
+      return [...state, { ...action.payload, cartItemId: payloadKey }];
     }
     case "INCREMENT_ITEM":
       return state.map((item) =>
-        item.id === action.payload
+        getItemKey(item) === action.payload
           ? { ...item, quantity: item.quantity + 1 }
           : item,
       );
     case "DECREMENT_ITEM":
       return state
         .map((item) =>
-          item.id === action.payload
+          getItemKey(item) === action.payload
             ? { ...item, quantity: Math.max(1, item.quantity - 1) }
             : item,
         )
         .filter((item) => item.quantity > 0);
     case "REMOVE_ITEM":
-      return state.filter((item) => item.id !== action.payload);
+      return state.filter((item) => getItemKey(item) !== action.payload);
     case "CLEAR_CART":
       return [];
     default:

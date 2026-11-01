@@ -1,142 +1,171 @@
-# Delivo
+# Delivo — Modern Food Delivery Platform
 
-A full-stack food delivery platform built with React and Node.js. Customers can browse menus, place orders, and track deliveries in real time. Administrators manage food listings, orders, and users through a dedicated dashboard.
+Delivo is a production-grade, full-stack food delivery web application built with **React 19**, **Vite**, **Tailwind CSS 4**, and **Node.js / Express** backed by a relational **MySQL** database. It provides an end-to-end customer journey—from customizable cuisine exploration and instant checkout to live interactive GPS delivery tracking and a dedicated administrative dispatch portal.
 
-![License](https://img.shields.io/badge/license-ISC-blue.svg)
-![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
-![React](https://img.shields.io/badge/react-19.x-61DAFB?logo=react&logoColor=white)
-![MySQL](https://img.shields.io/badge/database-MySQL-4479A1?logo=mysql&logoColor=white)
-![Vite](https://img.shields.io/badge/build-Vite-646CFF?logo=vite&logoColor=white)
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-  - [Running the App](#running-the-app)
-- [API Reference](#api-reference)
-- [Pages & Components](#pages--components)
-- [Contributing](#contributing)
-- [License](#license)
+[![Node.js Version](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React Version](https://img.shields.io/badge/React-19.x-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![MySQL](https://img.shields.io/badge/Database-MySQL-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 
 ---
 
-## Overview
-
-Delivo is a full-stack food delivery web application. It provides customers with a smooth end-to-end ordering experience — from browsing the menu to tracking delivery status. On the backend, a RESTful API handles authentication, order processing, and food management, all secured with JWT and backed by a MySQL database.
-
----
-
-## Features
-
-**Customer**
-- Secure login and registration with JWT authentication
-- Browse food menu with category filtering
-- Add to cart and proceed to checkout
-- Real-time order status tracking
-- Full order history
-
-**Admin**
-- Dashboard with order and user overview
-- Create, update, and delete food items with image upload
-- Update and manage order statuses
-- View and manage registered users
-- Protected admin-only routes
-
-**System**
-- Stateless JWT-based authentication
-- Server-side input validation via `express-validator`
-- File upload handling via `multer`
-- CORS-configured REST API
-
----
-
-## Tech Stack
-
-**Frontend**
-
-| Technology | Version | Purpose |
-|---|---|---|
-| React | 19.x | UI library |
-| Vite | 8.x | Build tool and dev server |
-| React Router DOM | 7.x | Client-side routing |
-| Tailwind CSS | 4.x | Utility-first styling |
-| Lucide React | 0.475+ | Icon set |
-
-**Backend**
-
-| Technology | Version | Purpose |
-|---|---|---|
-| Node.js | >= 18.0 | Runtime environment |
-| Express | 4.x | Web framework |
-| MySQL2 | 3.x | Database driver |
-| jsonwebtoken | 9.x | JWT authentication |
-| bcryptjs | 2.x | Password hashing |
-| Multer | 1.x | File upload handling |
-| express-validator | 6.x | Input validation |
-| dotenv | 16.x | Environment config |
-| Nodemon | 2.x | Dev auto-restart |
-
----
-
-## Project Structure
+## Architecture Overview
 
 ```
-delivo/
-├── client/                        # React frontend (Vite)
-│   ├── public/
+┌────────────────────────────────────────────────────────────────────────┐
+│                        CLIENT LAYER (React 19 + Vite)                  │
+│                                                                        │
+│   Landing Page       Menu & Customizer       Cart Drawer & Checkout    │
+│   (Home.jsx)         (FoodItemModal.jsx)     (Composite cart keys)     │
+│        │                     │                         │               │
+│        ▼                     ▼                         ▼               │
+│   AuthContext           CartContext               ToastContext         │
+│   (JWT Session)         (Web Audio Chimes)        (System Alerts)      │
+│        │                                               │               │
+│        └─────────────────────┬─────────────────────────┘               │
+│                              │ Axios API Client                        │
+└──────────────────────────────┼─────────────────────────────────────────┘
+                               │ HTTPS / JSON (Bearer JWT)
+┌──────────────────────────────┼─────────────────────────────────────────┐
+│                              ▼                                         │
+│                      API GATEWAY LAYER (Express 4)                     │
+│                                                                        │
+│   /api/auth       /api/foods        /api/orders       /api/admin       │
+│   /api/payment    Auth Middleware   Multer Uploads    Input Validator  │
+└──────────────────────────────┬─────────────────────────────────────────┘
+                               │ Connection Pool (mysql2/promise)
+┌──────────────────────────────┴─────────────────────────────────────────┐
+│                       PERSISTENCE LAYER (MySQL 8)                      │
+│                                                                        │
+│   users          food_items        orders           order_items        │
+│   (Pass bcrypt)  (Catalog & stock) (Status & total) (Item snapshots)   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Core System Capabilities
+
+### 1. Consumer Experience
+* **Custom Meal Modifier Engine ([FoodItemModal.jsx](client/src/components/FoodItemModal.jsx))**:
+  * Real-time spice intensity selector: *Mild 🌿*, *Medium 🌶️*, or authentic *Mitmita Hot 🔥*.
+  * Add-on selections (Extra Ayib, Extra Fresh Injera, Awaze Dip, Drink pairings) with reactive unit price recalculation.
+  * Special preparation notes passed through to the kitchen.
+* **Live GPS Radar & Courier Tracking ([DeliveryMap.jsx](client/src/components/DeliveryMap.jsx))**:
+  * Interactive OpenStreetMap & Leaflet vector map with zero external API key requirements.
+  * Real-time waypoint coordinate interpolation, moving motorbike courier marker, and arrival boundary pin.
+  * Real-time telemetry: Distance remaining (`km`), dynamic ETA (`mins`), and courier dispatch contact card.
+  * Interactive simulation mode (`Simulate Live Route`) for demonstrations and testing.
+* **Low-Latency Audio Feedback ([sound.js](client/src/utils/sound.js))**:
+  * Native Web Audio API synthesis delivering crisp micro-interaction chimes upon cart mutations and order progress without fetching heavy external audio assets.
+* **Composite Cart Engine ([CartContext.jsx](client/src/context/CartContext.jsx))**:
+  * Distinct items generated via composite hashing (`${id}-${spice}-${addons}-${note}`), allowing customers to order different variations of the same dish without state collisions.
+* **Multi-Step Checkout & Coupon System ([Checkout.jsx](client/src/pages/Checkout.jsx))**:
+  * Promo code discount engine (`DELIVO30`, `FREESHIP`, `WELCOME10`) with animated error-shake validation.
+  * Multiple payment rails: Chapa Online Gateway, Cash on Delivery, Bank Transfer, and Card.
+
+### 2. Operations & Administration ([Admin.jsx](client/src/pages/Admin.jsx))
+* **Business Analytics**: Real-time KPI aggregation for gross revenue, completed orders, registered customer counts, and dish performance.
+* **Order Dispatch Desk**: Granular status mutation engine (`pending` $\to$ `confirmed` $\to$ `preparing` $\to$ `out_for_delivery` $\to$ `delivered` $\to$ `cancelled`).
+* **Menu Lifecycle CRUD**: Create, edit, and toggle food items with image uploads via Multer and active stock flags.
+* **Role-Based Access Control**: Strict middleware guard (`verifyToken`, `verifyAdmin`) protecting sensitive routes.
+
+### 3. Backend & Security Architecture
+* **Server-Side Price Verification**: Orders enforce prices queried from MySQL; client-submitted totals are never blindly trusted.
+* **Atomic Transactions**: Orders and order item rows are committed within `START TRANSACTION` / `COMMIT` blocks with automatic `ROLLBACK` on stock failure.
+* **Stateless Authentication**: Passwords hashed using `bcryptjs` (salt rounds: 10), and authenticated routes secured via `jsonwebtoken`.
+* **Database Migrations Engine ([migrations.js](server/src/config/migrations.js))**: Self-bootstrapping schema creation with seed defaults.
+
+---
+
+## Technology Stack
+
+| Layer | Technology | Version | Architectural Responsibility |
+|:---|:---|:---|:---|
+| **Frontend UI** | React | 19.x | Component lifecycle & state management |
+| **Build & Bundler** | Vite | 8.x | Dev HMR server and optimized production packaging |
+| **Styling** | Tailwind CSS | 4.x | Design tokens, responsive layouts, micro-animations |
+| **Mapping Engine** | Leaflet | 1.9.x | Interactive vector mapping and telemetry tracking |
+| **Routing** | React Router DOM | 7.x | Declarative client-side routing & protected route gates |
+| **Icons** | Lucide React | 0.475+ | Clean accessible UI iconography |
+| **Backend Runtime** | Node.js | >= 18.0 | Asynchronous event-driven I/O execution |
+| **HTTP Framework**| Express | 4.x | RESTful API routing, middleware chaining, CORS |
+| **Database** | MySQL | 8.0+ | Relational data persistence, foreign keys, transactions |
+| **Driver** | mysql2/promise | 3.x | Non-blocking async connection pooling |
+| **Auth & Crypto** | jsonwebtoken, bcryptjs | 9.x, 2.x | Token verification and cryptographic hashing |
+| **File Ingestion** | Multer | 1.4.x | Multipart/form-data food image storage |
+| **Input Security** | express-validator | 6.14.x | Strict request payload sanitization and validation |
+
+---
+
+## Directory Structure
+
+```
+Food-delivery-app/
+├── client/                              # Frontend application (Vite SPA)
+│   ├── public/                          # Static assets and favicon
 │   └── src/
-│       ├── components/            # Reusable UI components
-│       │   ├── Navbar.jsx
-│       │   ├── Footer.jsx
-│       │   ├── Toast.jsx
-│       │   ├── ProtectedRoute.jsx
-│       │   ├── LoadingSpinner.jsx
-│       │   ├── ConfirmDialog.jsx
-│       │   ├── BrandLogo.jsx
-│       │   ├── CategoryItem.jsx
-│       │   └── FoodImage.jsx
-│       ├── context/
-│       │   └── AuthContext.jsx    # Global authentication state
-│       ├── pages/
-│       │   ├── Home.jsx
-│       │   ├── Login.jsx
-│       │   ├── Checkout.jsx
-│       │   ├── Order.jsx
-│       │   ├── OrderHistory.jsx
-│       │   ├── TrackOrder.jsx
-│       │   ├── Admin.jsx
-│       │   └── Contact.jsx
+│       ├── components/                  # Reusable UI component library
+│       │   ├── BrandLogo.jsx            # Dynamic vector branding
+│       │   ├── CartDrawer.jsx           # Animated slide-out cart drawer
+│       │   ├── CategoryItem.jsx         # Interactive cuisine category navigator
+│       │   ├── ConfirmDialog.jsx        # Accessible action confirmation modal
+│       │   ├── DeliveryMap.jsx          # Leaflet GPS radar & simulated courier
+│       │   ├── FoodImage.jsx            # Resilient food image with fallback
+│       │   ├── FoodItemModal.jsx        # Customizer modal (Spice & add-ons)
+│       │   ├── Footer.jsx               # Platform footer & social navigation
+│       │   ├── LoadingSpinner.jsx       # Standardized loading state indicator
+│       │   ├── Navbar.jsx               # Navigation bar with auth & search
+│       │   ├── ProtectedRoute.jsx       # Route-level authentication gate
+│       │   └── Toast.jsx                # System notification toast component
+│       ├── context/                     # Global React state providers
+│       │   ├── AuthContext.jsx          # JWT session, profile, and logout logic
+│       │   ├── CartContext.jsx          # Composite items, quantities & chimes
+│       │   └── ToastContext.jsx         # Application-wide alert dispatcher
+│       ├── pages/                       # Application route views
+│       │   ├── Admin.jsx                # Dispatch & metrics dashboard
+│       │   ├── Checkout.jsx             # 3-step checkout & coupon discounts
+│       │   ├── Contact.jsx              # Customer support inquiry page
+│       │   ├── Home.jsx                 # Conversion-focused landing page
+│       │   ├── Login.jsx                # Dual-tab Sign In & Sign Up flow
+│       │   ├── Order.jsx                # Menu catalog, search, and category filters
+│       │   ├── OrderHistory.jsx         # Historical orders and reorder action
+│       │   ├── PaymentVerify.jsx        # Payment gateway webhook callback
+│       │   └── TrackOrder.jsx           # Progress timeline & GPS delivery map
 │       ├── services/
-│       │   └── api.js             # Centralized API service layer
-│       ├── App.jsx                # Root component and routing
-│       └── main.jsx
+│       │   └── api.js                   # Centralized Axios client & endpoints
+│       ├── utils/
+│       │   └── sound.js                 # Web Audio API procedural synthesis
+│       ├── App.jsx                      # Root application layout & routing
+│       ├── index.css                    # Tailwind tokens & scroll architecture
+│       └── main.jsx                     # Client entry point
 │
-├── server/                        # Node.js / Express backend
+├── server/                              # Backend application (REST API)
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── database.js        # MySQL connection pool
-│   │   ├── controllers/           # Route handler logic
-│   │   ├── middleware/            # Auth and validation middleware
+│   │   │   ├── database.js              # MySQL connection pool configuration
+│   │   │   └── migrations.js            # Auto-schema migrations & seeding
+│   │   ├── middleware/
+│   │   │   └── auth.js                  # Token and role authorization filters
 │   │   ├── routes/
-│   │   │   ├── auth.js
-│   │   │   ├── foods.js
-│   │   │   ├── orders.js
-│   │   │   └── admin.js
+│   │   │   ├── admin.js                 # Admin metrics & status mutations
+│   │   │   ├── auth.js                  # Authentication & credential endpoints
+│   │   │   ├── foods.js                 # Menu catalog & item CRUD
+│   │   │   ├── orders.js                # Order placement, history & tracking
+│   │   │   └── payment.js               # Payment gateway orchestration
 │   │   └── utils/
-│   ├── server.js                  # Express entry point
-│   ├── .env.example
-│   └── package.json
+│   │       ├── chapa.js                 # Chapa gateway integration helper
+│   │       └── logger.js                # Structured console logging utility
+│   ├── uploads/                         # Dish image uploads storage
+│   ├── server.js                        # Express server entry point
+│   ├── package.json
+│   └── .env.example
 │
-├── .gitignore
-└── README.md
+├── .gitignore                           # Workspace git exclusion rules
+├── package.json                         # Root monorepo workspace runner
+└── README.md                            # Technical architecture & runbook
 ```
 
 ---
@@ -144,172 +173,154 @@ delivo/
 ## Getting Started
 
 ### Prerequisites
+* **Node.js**: `>= 18.0.0`
+* **npm**: `>= 9.0.0`
+* **MySQL Server**: `>= 8.0`
 
-- [Node.js](https://nodejs.org/) `>= 18.0.0`
-- [npm](https://www.npmjs.com/) `>= 9.0.0`
-- [MySQL](https://www.mysql.com/) `>= 8.0`
-- [Git](https://git-scm.com/)
-
-### Installation
-
-Clone the repository:
+### 1. Clone & Install Dependencies
 
 ```bash
 git clone https://github.com/Abeenaa/Food-delivery-app.git
 cd Food-delivery-app
-```
 
-Install dependencies for both client and server:
-
-```bash
-# Server
-cd server && npm install
-
-# Client
-cd ../client && npm install
-```
-
-### Environment Variables
-
-Copy the example env file and configure it:
-
-```bash
+# Install backend dependencies
 cd server
+npm install
+
+# Install frontend dependencies
+cd ../client
+npm install
+```
+
+### 2. Environment Configuration
+
+Create a `.env` file in the `server` directory:
+
+```bash
+cd ../server
 cp .env.example .env
 ```
 
-`server/.env`:
+Configure `server/.env`:
 
 ```env
 PORT=5000
 NODE_ENV=development
 
+# MySQL Database
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_NAME=delivo_db
 
-JWT_SECRET=your_secure_random_secret
+# Security & Authentication
+JWT_SECRET=replace_with_a_secure_random_hex_string
 JWT_EXPIRES_IN=7d
 
+# File Storage
 MAX_FILE_SIZE=5242880
 UPLOAD_PATH=./uploads
 
+# Default Super Admin Seed Credentials
 ADMIN_EMAIL=admin@delivo.com
-ADMIN_PASSWORD=your_admin_password
+ADMIN_PASSWORD=AdminPassword123!
 ```
 
-`client/.env`:
+Create a `.env` file in the `client` directory:
+
+```bash
+cd ../client
+```
+
+Configure `client/.env`:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-### Running the App
+### 3. Database Initialization
 
-Start the backend:
+Start your MySQL server. Delivo includes auto-migrations that construct all required tables (`users`, `food_items`, `orders`, `order_items`) and seed initial categories on server boot:
 
 ```bash
-cd server
-npm run dev      # development (nodemon)
-npm start        # production
+# In MySQL shell / client, ensure the database exists:
+CREATE DATABASE IF NOT EXISTS delivo_db;
 ```
 
-Start the frontend:
+### 4. Running the Application
+
+Open two terminal instances:
 
 ```bash
+# Terminal 1: Launch Backend API Server (Port 5000)
+cd server
+npm run dev
+
+# Terminal 2: Launch Frontend Client (Port 5173)
 cd client
 npm run dev
 ```
 
-| Service | URL |
-|---|---|
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:5000 |
+Or from the workspace root:
+```bash
+npm run dev:server
+npm run dev:client
+```
+
+Access the client at: `http://localhost:5173`  
+Access the API health at: `http://localhost:5000/api/foods`
 
 ---
 
-## API Reference
+## REST API Reference
 
-All endpoints are prefixed with `/api`.
+### Authentication (`/api/auth`)
+| Method | Endpoint | Description | Auth Required |
+|:---|:---|:---|:---:|
+| `POST` | `/api/auth/register` | Register customer account | No |
+| `POST` | `/api/auth/login` | Authenticate and obtain JWT | No |
+| `GET` | `/api/auth/me` | Fetch active user profile | Yes (Bearer) |
 
-### Authentication — `/api/auth`
+### Food Catalog (`/api/foods`)
+| Method | Endpoint | Description | Auth Required |
+|:---|:---|:---|:---:|
+| `GET` | `/api/foods` | List all active menu items | No |
+| `GET` | `/api/foods/:id` | Fetch specific food details | No |
+| `POST` | `/api/foods` | Add menu item (Multipart) | Admin |
+| `PUT` | `/api/foods/:id` | Update menu item & stock status | Admin |
+| `DELETE`| `/api/foods/:id` | Deactivate food item | Admin |
 
-| Method | Endpoint | Description | Auth |
-|---|---|---|---|
-| POST | `/auth/login` | Customer login | — |
-| POST | `/auth/register` | Customer registration | — |
-| POST | `/auth/admin/login` | Admin login | — |
-| GET | `/auth/me` | Get current user profile | JWT |
+### Orders & Tracking (`/api/orders`)
+| Method | Endpoint | Description | Auth Required |
+|:---|:---|:---|:---:|
+| `POST` | `/api/orders` | Place validated order with items | Optional |
+| `GET` | `/api/orders/my-orders` | Fetch customer order history | Yes (Bearer) |
+| `GET` | `/api/orders/:id/track` | Fetch tracking status & driver info | No |
 
-### Foods — `/api/foods`
-
-| Method | Endpoint | Description | Auth |
-|---|---|---|---|
-| GET | `/foods` | List all food items | — |
-| GET | `/foods/:id` | Get single food item | — |
-| POST | `/foods` | Create food item | Admin |
-| PUT | `/foods/:id` | Update food item | Admin |
-| DELETE | `/foods/:id` | Delete food item | Admin |
-
-### Orders — `/api/orders`
-
-| Method | Endpoint | Description | Auth |
-|---|---|---|---|
-| POST | `/orders` | Place a new order | JWT |
-| GET | `/orders/my-orders` | Get user order history | JWT |
-| GET | `/orders/:id` | Get order details and status | JWT |
-
-### Admin — `/api/admin`
-
-| Method | Endpoint | Description | Auth |
-|---|---|---|---|
-| GET | `/admin/orders` | List all orders | Admin |
-| PUT | `/admin/orders/:id` | Update order status | Admin |
-| GET | `/admin/users` | List all users | Admin |
+### Administrative Portal (`/api/admin`)
+| Method | Endpoint | Description | Auth Required |
+|:---|:---|:---|:---:|
+| `GET` | `/api/admin/stats` | Aggregate revenue & order metrics | Admin |
+| `GET` | `/api/admin/orders` | List all system orders | Admin |
+| `PUT` | `/api/admin/orders/:id`| Update order status lifecycle | Admin |
+| `GET` | `/api/admin/users` | List registered user directory | Admin |
 
 ---
 
-## Pages & Components
+## Production Build Verification
 
-### Pages
+To create optimized production bundles:
 
-| Page | Route | Description |
-|---|---|---|
-| Home | `/` | Menu browsing with category filter |
-| Login | `/login` | Customer and admin authentication |
-| Checkout | `/checkout` | Cart review and order placement |
-| Order | `/order/:id` | Order confirmation and details |
-| OrderHistory | `/orders` | User's past orders |
-| TrackOrder | `/track/:id` | Live order status tracking |
-| Admin | `/admin` | Admin dashboard (protected) |
-| Contact | `/contact` | Support and contact page |
+```bash
+# Compile and bundle client application
+cd client
+npm run build
+```
 
-### Key Components
-
-| Component | Description |
-|---|---|
-| `Navbar` | Responsive nav with cart count and auth state |
-| `ProtectedRoute` | Wraps routes requiring authentication |
-| `AuthContext` | Global auth state via React Context API |
-| `Toast` | App-wide notification system |
-| `ConfirmDialog` | Generic confirmation modal |
-| `LoadingSpinner` | Global loading indicator |
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create your branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m "feat: description"`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
-
-Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
+Production assets are compiled into `client/dist` with minification, tree-shaking, and CSS optimizations.
 
 ---
 
 ## License
 
-ISC — see [LICENSE](LICENSE) for details.
+This project is licensed under the [ISC License](LICENSE).

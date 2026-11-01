@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import OrderHistory from "./pages/OrderHistory";
 import TrackOrder from "./pages/TrackOrder";
+import PaymentVerify from "./pages/PaymentVerify";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                   <TrackOrder />
                 </ProtectedRoute>
               } />
+              <Route path="/payment/verify" element={<PaymentVerify />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Login />} />

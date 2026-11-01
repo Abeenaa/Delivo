@@ -89,8 +89,35 @@ const createTables = async () => {
       await pool.execute('ALTER TABLE orders MODIFY COLUMN user_id INT NULL');
       logger.success('Orders table updated to allow guest orders');
     } catch (error) {
-      // Table might already be updated or doesn't exist yet
       logger.info('Orders table user_id column update skipped');
+    }
+
+    // Add tx_ref column for Chapa payment reference
+    try {
+      await pool.execute('ALTER TABLE orders ADD COLUMN tx_ref VARCHAR(100) NULL UNIQUE');
+      logger.success('orders.tx_ref column added');
+    } catch (error) {
+      logger.info('orders.tx_ref column already exists — skipping');
+    }
+
+    // Add payment_status column
+    try {
+      await pool.execute(
+        "ALTER TABLE orders ADD COLUMN payment_status ENUM('pending','paid','failed') DEFAULT 'pending'"
+      );
+      logger.success('orders.payment_status column added');
+    } catch (error) {
+      logger.info('orders.payment_status column already exists — skipping');
+    }
+
+    // Update payment_method column enum to include 'chapa'
+    try {
+      await pool.execute(
+        "ALTER TABLE orders MODIFY COLUMN payment_method ENUM('cash', 'card', 'mobile', 'chapa') DEFAULT 'cash'"
+      );
+      logger.success('orders.payment_method enum updated to include chapa');
+    } catch (error) {
+      logger.info('orders.payment_method column update skipped');
     }
 
     // Upgrade image_url column to LONGTEXT to support large base64 images

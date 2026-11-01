@@ -171,3 +171,23 @@ export const adminAPI = {
   // Get dashboard stats
   getStats: () => apiRequest('/admin/stats', { adminAuth: true }),
 };
+
+// ─── Payment API (Chapa) ────────────────────────────────────────────────────
+export const paymentAPI = {
+  /**
+   * Initialize a Chapa payment session for an existing order.
+   * Returns { checkout_url, tx_ref }
+   */
+  initialize: (order_id) =>
+    apiRequest('/payment/initialize', {
+      method: 'POST',
+      body: JSON.stringify({ order_id }),
+    }),
+
+  /**
+   * Verify a completed payment after Chapa redirects back.
+   * Returns { payment_status, order_id, tx_ref }
+   */
+  verify: (tx_ref, order_id) =>
+    apiRequest(`/payment/verify?tx_ref=${encodeURIComponent(tx_ref)}&order_id=${order_id}`),
+};

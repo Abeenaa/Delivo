@@ -14,7 +14,7 @@ const orderValidation = [
   body('delivery_name').trim().isLength({ min: 2 }).withMessage('Delivery name is required'),
   body('delivery_phone').trim().isLength({ min: 8 }).withMessage('Delivery phone is required'),
   body('delivery_address').trim().isLength({ min: 5 }).withMessage('Delivery address is required'),
-  body('payment_method').isIn(['cash', 'card', 'mobile']).withMessage('Invalid payment method')
+  body('payment_method').isIn(['cash', 'card', 'mobile', 'chapa']).withMessage('Invalid payment method')
 ];
 
 // POST /api/orders - Create new order (Guest or Customer)
